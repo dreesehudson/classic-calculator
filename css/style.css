@@ -1,4 +1,9 @@
-div {
-    min-height: 3em;
-    line-height: 3;
+html, body {
+  height: 100vh;
+}
+
+
+div, button {
+    min-height: 5em;
+    line-height: 5;
   }

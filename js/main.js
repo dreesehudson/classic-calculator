@@ -2,80 +2,22 @@
 
 class Button {
     //Model
-    constructor(){
-
+    constructor(tempType, tempId){
+        this.type = tempType;
+        this.id = tempId;
+        this.element = "button";
+        this.parent = buttonRow;
+        this.classes = "text-white";
     }
-    //View
-    
+    //Functions 
+
     //Controller
-    
-}    
+}          
 
-class Number extends Button {
-    //Model
-    constructor(){
-        super(Button);
-        //numerical value for button
-        //this.value = value;
-    }    
-    
-    //View
-        //display the value on this button
-    
-    //Controller    
-        //onclick send value to calculator display and calculator model
-            
-}        
-
-class Operator extends Button {
-    //Model
-    constructor(op){
-        super(Button);
-        //mathmatical operator for this button
-        this.op = op;
-    }    
-    
-    //View
-        //display operator on this button
-    
-    //Controller    
-        //onclick send value to calculator display and calculator model
-
-}        
-
-class Equal extends Button {
-    //Model: 
-    constructor(){
-        super(Button);
-    }
-
-    //View: 
-        //display '=' symbol
-    
-    //Controller: 
-        //tell main calc. model to concat expression and execute math
-}
-    
-class Clear extends Button{
-    //Model:
-    constructor(){
-        super(Button);
-    }
-    
-    //View: 
-        //display 'C'
-    
-    //Controller: 
-        //send request to main calc. to erase last existing expression
-        
-        //Methods:
-        //Hard Clear: send request to main calc. to erase all existing expressions
-
-}
     
 //create div for row and cols
-function generateElement(type, id, classes, parent = false, eventListener = false) {
-    let newElement = document.createElement(type);
+function generateElement(element, id, classes, parent = false, eventListener = false) {
+    let newElement = document.createElement(element);
     newElement.setAttribute("class", classes);
     newElement.setAttribute("id", id);
     if (eventListener) {
@@ -92,15 +34,17 @@ function generateElement(type, id, classes, parent = false, eventListener = fals
 //Main Calculator
 
     //Model
-        //store value(s) of numeral button press(es)
+    //store value(s) of numeral button press(es)
     let expression = [];
     let currResult = 0;
-        //concat and reduce expression down to currResult, 
-        //then on operation press make this value the first value in expression array
+    //concat and reduce expression down to currResult, 
+    //then on operation press make this value the first value in expression array
 
     //View
     function init(){
         const main = document.getElementById("app");
+        const body = document.querySelector("body");
+        body.setAttribute("class", "d-flex justify-content-center")
         
         //generate calculator UI
         //     [display         ]
@@ -111,6 +55,7 @@ function generateElement(type, id, classes, parent = false, eventListener = fals
         //     [C]  [0]  [.]  [=]  
         
         //header (display)
+        const headerRow = generateElement("div", "headerRow", "row", main);
         const displayRow = generateElement("div", "displayRow", "row", main);
         const currValueCol = generateElement("div", "currValueCol", "col-4 pr-0 py-1 bg-secondary", displayRow);
         const currValueField = generateElement("p", "currValueField", "text-white text-center my-2", currValueCol);
@@ -119,27 +64,29 @@ function generateElement(type, id, classes, parent = false, eventListener = fals
         const displayField = generateElement("p", "displayField", "text-white text-right my-2", displayCol);
         displayField.textContent = "";
 
-        //series of square buttons
-            //numerical
-            //operators
-            //clear button
-        let numberButtons = [];
-        let numberButtonCount = 10;
-        let operatorButtons = [];
-        let operatorButtonCount = 8
-
         const buttonRow = generateElement("div", "buttonRow", "row", main);
 
-        for (let i = 0; i < numberButtonCount; i++){
-            numberButtons[i] = new Number;
-        }
+        let buttons = ["C", "Tax", "Tip", "pi", 
+                        "7", "8", "9", "/", 
+                        "4", "5", "6", "*", 
+                        "1", "2", "3", "-", 
+                        "0", ".", "=", "+"]
 
-        for (let i = 0; i < operatorButtonCount; i++){
-            operatorButtons[i] = new Operator;
+        for (let i = 0; i < buttons.length; i++){
+            //create div for each game tile
+            const newElement = document.createElement("button");
+            //naming the tile based on its for loop index.
+            newElement.setAttribute("id", `${buttons[i]}`);
+            //apply default classes for each tile and its custom borders defined in array parameter
+            newElement.setAttribute("class", "col-3 border btn-primary text-center");
+            //add text Content
+            newElement.textContent = `${buttons[i]}`;
+            //apply event listener
+            //newElement.addEventListener("click", click);
+            //adding tile to the game board front-end
+            buttonRow.appendChild(newElement);
         }
-
-        //for loop to generate series of buttons
-            //switch inputs from values to strings 
+    } 
     //Controller
         //receive numeral button controller cmd, tell model to update expression 
         //receive operator button controller cmd, tell model to update expression
