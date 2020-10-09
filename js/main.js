@@ -8,11 +8,10 @@ class Calculator {
         this.clear();
     }
 
-    //VIEW
     //onClick type: "hard-clear"
     clear() {
-        //tell UI to clear current display, 
-        this.currentEntry = '';
+        //tell UI to clear current display to default value, 
+        this.currentEntry = '0';
         //clear previous display, 
         this.previousEntry = '';
         //clear current operation
@@ -27,27 +26,34 @@ class Calculator {
     //onClick type: number (0-9, pi, and .). Passes in value of button clicked
     appendNumber(number) {
         //kickout if decimal point is already in current Entry.
-        if (number === '.' && this.currentEntry.includes('.')) return;
-        if (number === "π") {number = `${Math.PI.toFixed(5)}`};
-        //otherwise add the passed number to the end of the current entry string.
+        if (number === '.' && this.currentEntry.includes('.')){
+            return;
+        }; 
+        //if pi entered, convert from symbol pi to number of pi that compute() can handle
+        if (number === "π"){ 
+            number = `${Math.PI.toFixed(5)}` 
+        };
+        //then add the passed number to the end of the current entry string.
         this.currentEntry = this.currentEntry.toString() + number.toString();
     }
 
     //onClick type: operator (+, -, *, /, ^2) pass operator of button clicked
     chooseOperation(operation) {
         //kickout if no numbers in current entry yet
-        if (this.currentEntry === '') return;
+        if (this.currentEntry === ''){
+            return;
+        };
         //if previous entry has a value, and this is a subsequent operation, do math
         if (this.previousEntry !== '') {
             //go do math
             this.compute();
-        }
+        };
         //reassign this local operation so that updateDisplay() can show it in the previous Entry field
         this.operation = operation;
         //reassign the current result to empty previous entry (thanks compute())
         this.previousEntry = this.currentEntry;
         //clear current entry so that it can accept new inputs later
-        this.currentEntry = '';
+        this.currentEntry = '0';
     }
 
     //doing the math
@@ -59,7 +65,9 @@ class Calculator {
         //convert currentEntry into floating number in order to do math
         const current = parseFloat(this.currentEntry);
         //kickout if somehow previous or current values are non numbers
-        if (isNaN(prev) || isNaN(current)) return;
+        if (isNaN(prev) || isNaN(current)){
+            return;
+        };
         //switch to handle all operator types in one function
         switch (this.operation) {
             case '+':
@@ -79,7 +87,7 @@ class Calculator {
                 break;
             default:
                 return;
-        }
+        };
         //give the result back to the currentEntry
         this.currentEntry = computation;
         //clear operation when finished using it
@@ -89,7 +97,7 @@ class Calculator {
     }
 
     //called when UI updatesDisplay()
-    //handles odd behavior from switching between strings and numbers
+    //handles odd behavior from switching between strings and numbers and also formats the display numbers
     getDisplayNumber(number) {
         //convert number to string
         const stringNumber = number.toString();
@@ -102,34 +110,35 @@ class Calculator {
         //clear display number, if somehow not a number
         if (isNaN(integerDigits)) {
             integerDisplay = '';
-        } 
+        }
         //otherwise convert left-of-decimal number to string with comma delimited values
         else {
             integerDisplay = integerDigits.toLocaleString('en', { maximumFractionDigits: 0 });
-        }
+        };
         //if right-of-decimal numbers exist, format final answer with decimal, all as string
         if (decimalDigits != null) {
             return `${integerDisplay}.${decimalDigits}`;
-        } else {
+        } 
+        //else return just left-hand side string
+        else {
             return integerDisplay;
-        }
+        };
     }
 
     //render new calculations to UI after every button press.
     updateDisplay() {
         //display currentEntry output from getDisplayNumber() in HTML
-        this.currentEntryTextElement.innerText =
-            this.getDisplayNumber(this.currentEntry);
+        this.currentEntryTextElement.innerText = this.getDisplayNumber(this.currentEntry);
         //if operation has been pressed and not yet cleared via secondary operation, all-clear, or equals
         if (this.operation != null) {
             //display previousEntry output from getDisplayNumber() and current operation in HTML
             this.previousEntryTextElement.innerText =
                 `${this.getDisplayNumber(this.previousEntry)} ${this.operation}`;
-        } 
+        }
         //otherwise operation has been cleared via 2nd op, all-clear, or equals, therefore clear previous entry.
         else {
             this.previousEntryTextElement.innerText = '';
-        }
+        };
     }
 }
 
@@ -139,9 +148,6 @@ class Button {
     constructor(_id, _type) {
         this.type = _type;
         this.id = _id;
-        this.element = "button";
-        this.parent = buttonRow;
-        this.classes = "";
     }
 
     //create Button instance on buttonRow with passed id and data-type
@@ -166,9 +172,18 @@ document.getElementById("prevEntry").textContent = "";
 //bottom half of display, used to display current numbers that have been entered, and displays final answer upon equals command
 generateElement("div", "currEntry", "col-12 bg-dark text-white text-right border-bottom", outputRow);
 document.getElementById("currEntry").setAttribute("data-current-Entry", "");
-document.getElementById("currEntry").textContent = "";
+document.getElementById("currEntry").textContent = "0";
 //container for buttons to populate
 const buttonRow = generateElement("div", "buttonRow", "row", main);
+
+//create, store, and populate elements for row and cols
+function generateElement(element, id, classes, parent) {
+    let newElement = document.createElement(element);
+    newElement.setAttribute("class", classes);
+    newElement.setAttribute("id", id);
+    parent.appendChild(newElement);
+    return newElement;
+}
 
 //button values to be passed to Button Factory
 let buttonNames = [
@@ -234,33 +249,23 @@ operationButtons.forEach(button => {
 })
 
 //only one button of equals type, so no looping necessary
-equalsButton.addEventListener('click', button => {
+equalsButton.addEventListener('click', item => {
     calculator.compute();
     calculator.updateDisplay();
 })
 
 //only one button of clear type, so no looping necessary
-allClearButton.addEventListener('click', button => {
+allClearButton.addEventListener('click', item => {
     calculator.clear();
     calculator.updateDisplay();
 })
 
 //only one button of delete type, so no looping necessary
-deleteButton.addEventListener('click', button => {
+deleteButton.addEventListener('click', item => {
     calculator.delete();
     calculator.updateDisplay();
 })
 
-
-
-//create, store, and populate elements for row and cols
-function generateElement(element, id, classes, parent) {
-    let newElement = document.createElement(element);
-    newElement.setAttribute("class", classes);
-    newElement.setAttribute("id", id);
-    parent.appendChild(newElement);
-    return newElement;
-}
 
 
 
