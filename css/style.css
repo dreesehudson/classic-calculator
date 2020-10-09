@@ -7,4 +7,5 @@ html, body {
 div, button {
     min-height: 5em;
     line-height: 5;
+    font-size: 1.123em;
   }

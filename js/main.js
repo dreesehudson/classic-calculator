@@ -4,7 +4,7 @@ class Calculator {
     constructor(previousEntryTextElement, currentEntryTextElement) {
         this.previousEntryTextElement = previousEntryTextElement;
         this.currentEntryTextElement = currentEntryTextElement;
-        //on creation of each instance, clear out the display
+        //on creation of calculator, clear out the display
         this.clear();
     }
 
@@ -28,6 +28,7 @@ class Calculator {
     appendNumber(number) {
         //kickout if decimal point is already in current Entry.
         if (number === '.' && this.currentEntry.includes('.')) return;
+        if (number === "π") {number = `${Math.PI.toFixed(5)}`};
         //otherwise add the passed number to the end of the current entry string.
         this.currentEntry = this.currentEntry.toString() + number.toString();
     }
@@ -74,7 +75,7 @@ class Calculator {
                 computation = prev / current;
                 break;
             case '^2':
-                computation = current^2;
+                computation = current * current;
                 break;
             default:
                 return;
@@ -156,21 +157,24 @@ class Button {
 
 // //Build Row/Col Framework dynamically for UI
 const main = document.getElementById("app");
-const headerRow = generateElement("div", "headerRow", "row", main);
+//display container
 const outputRow = generateElement("div", "outputRow", "row", main);
+//top half of display, used to display previous entry once operator has been selected
 generateElement("div", "prevEntry", "col-12 bg-dark text-white text-right border-bottom", outputRow);
 document.getElementById("prevEntry").setAttribute("data-previous-Entry", "");
 document.getElementById("prevEntry").textContent = "";
+//bottom half of display, used to display current numbers that have been entered, and displays final answer upon equals command
 generateElement("div", "currEntry", "col-12 bg-dark text-white text-right border-bottom", outputRow);
 document.getElementById("currEntry").setAttribute("data-current-Entry", "");
 document.getElementById("currEntry").textContent = "";
+//container for buttons to populate
 const buttonRow = generateElement("div", "buttonRow", "row", main);
 
 //button values to be passed to Button Factory
 let buttonNames = [
     { id: "C", type: "all-Clear" },
     { id: "DEL", type: "delete" },
-    { id: "3.14", type: "number" },
+    { id: "π", type: "number" },
     { id: "^2", type: "operation" },
     { id: "7", type: "number" },
     { id: "8", type: "number" },
